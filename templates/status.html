@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Training Status</title>
+    <style>
+        body {
+            font-family: "Trebuchet MS", sans-serif;
+            margin: 40px;
+            background: #61746c;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+        }
+        .container {
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            margin: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        h2 {
+            color: #3b5233;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.1em;
+            margin: 8px 0;
+        }
+        #job-id {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 5px 8px;
+            border-radius: 4px;
+            color: #555;
+            word-break: break-all;
+        }
+        #status-box {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        #status-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+        #status-message {
+            margin-top: 10px;
+            color: #555;
+            min-height: 20px;
+        }
+        .status-pending { border-color: #f0ad4e; color: #f0ad4e; }
+        .status-training { border-color: #337ab7; color: #337ab7; }
+        .status-completed { border-color: #5cb85c; color: #5cb85c; }
+        .status-failed { border-color: #d9534f; color: #d9534f; }
+        #download-button {
+            display: none; /* Hidden by default */
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: #3b5233;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        #download-button:hover {
+            background: #4a6841;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #337ab7;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 15px auto 0 auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Training Job Status</h2>
+        <p>Your Job ID is: <strong id="job-id">{{ job_id }}</strong></p>
+
+        <div id="status-box">
+            <div id="status-text">Loading...</div>
+            <div id="status-message"></div>
+            <div class="loader" id="loader"></div>
+        </div>
+        
+        <a id="download-button" href="{{ url_for('download_model', job_id=job_id) }}">Download Model</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const jobId = document.getElementById('job-id').textContent;
+            const statusBox = document.getElementById('status-box');
+            const statusText = document.getElementById('status-text');
+            const statusMessage = document.getElementById('status-message');
+            const downloadButton = document.getElementById('download-button');
+            const loader = document.getElementById('loader');
+
+            function checkStatus() {
+                // Fetch status from the API endpoint
+                fetch(`/api/status/${jobId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const status = data.status || 'error';
+                        const message = data.message || 'Could not retrieve status.';
+
+                        // Update UI elements
+                        statusText.textContent = status;
+                        statusMessage.textContent = message;
+                        
+                        // Update styling based on status
+                        statusBox.className = `status-${status}`;
+                        
+                        // Handle visibility of loader and download button
+                        if (status === 'pending' || status === 'training') {
+                            loader.style.display = 'block';
+                            downloadButton.style.display = 'none';
+                            // Poll again after a few seconds
+                            setTimeout(checkStatus, 3000); 
+                        } else {
+                            loader.style.display = 'none';
+                            if (status === 'completed') {
+                                downloadButton.style.display = 'inline-block';
+                            } else {
+                                downloadButton.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching status:', error);
+                        statusText.textContent = 'Error';
+                        statusMessage.textContent = 'Could not connect to the server to get status.';
+                        loader.style.display = 'none';
+                    });
+            }
+
+            // Initial status check
+            checkStatus();
+        });
+    </script>
+</body>
+</html>

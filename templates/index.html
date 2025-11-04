@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Model Training Portal</title>
+    <style>
+        body {
+            font-family: "Trebuchet MS", sans-serif;
+            margin: 40px;
+            background: #61746c;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        h2 {
+            text-align: center;
+            color: #3b5233;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box; /* Important for consistent sizing */
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            margin-top: 25px;
+            padding: 12px;
+            width: 100%;
+            background: #3b5233;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background: #4a6841;
+        }
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Train Your Model</h2>
+
+        <!-- This is where flashed messages from Flask will appear -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+            <label for="model">Model Type:</label>
+            <select id="model" name="model">
+                <option value="yolo">YOLO</option>
+                <option value="resnet">ResNet</option>
+            </select>
+
+            <label for="epochs">Epochs:</label>
+            <input type="number" id="epochs" name="epochs" value="10" min="1">
+
+            <label for="batch">Batch Size:</label>
+            <input type="number" id="batch" name="batch" value="16" min="1">
+
+            <label for="file">Upload Dataset (.zip):</label>
+            <input type="file" id="file" name="file" required accept=".zip">
+
+            <button type="submit">Start Training</button>
+        </form>
+    </div>
+</body>
+</html>
