@@ -1,0 +1,23 @@
+# Flask web interface
+Flask>=2.0.0
+
+# YOLO Object Detection
+ultralytics>=8.0.0
+
+# Orientation AI (ResNet)
+torch>=1.8.0
+torchvision>=0.9.0
+
+# Image processing
+opencv-python>=4.6.0
+Pillow>=7.1.2
+albumentations
+
+# Data handling
+numpy>=1.23.0
+PyYAML>=5.3.1
+
+# Utilities
+tqdm
+scipy>=1.4.1
+

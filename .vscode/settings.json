@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./AI models/ObjectIdentification_AI",
+        "./AI models/Orientation_AI"
+    ]
+}

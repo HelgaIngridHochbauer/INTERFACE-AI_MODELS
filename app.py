@@ -45,26 +45,47 @@ def start_training_thread(job_id, model_type, epochs, batch_size, dataset_path):
         # Call the actual training script using subprocess.
         # This runs the training in a separate process.
         # We pass all necessary parameters as command-line arguments.
+        import sys
+        
+        # Get the absolute path to train.py
+        train_script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'train.py')
+        
+        # Use sys.executable to ensure we use the same Python interpreter
         command = [
-            'python',
-            'train.py',
+            sys.executable,
+            train_script_path,
             '--job_id', job_id,
             '--model_type', model_type,
             '--epochs', str(epochs),
             '--batch_size', str(batch_size),
-            '--dataset_path', dataset_path,
-            '--output_dir', app.config['UPLOAD_FOLDER']
+            '--dataset_path', os.path.abspath(dataset_path),
+            '--output_dir', os.path.abspath(app.config['UPLOAD_FOLDER'])
         ]
         
         # Execute the command. The `check=True` will raise an exception if the script fails.
-        subprocess.run(command, check=True, capture_output=True, text=True)
+        # Use unbuffered output and flush frequently to see progress
+        result = subprocess.run(
+            command, 
+            check=True, 
+            capture_output=True, 
+            text=True, 
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+            bufsize=1  # Line buffered
+        )
+        
+        # Log output for debugging
+        if result.stdout:
+            print(f"Training stdout: {result.stdout}")
+        if result.stderr:
+            print(f"Training stderr: {result.stderr}")
 
         # If the script completes successfully, update status to 'completed'.
         update_status(job_id, 'completed', 'Training finished successfully. Your model is ready for download.')
 
     except subprocess.CalledProcessError as e:
         # If the training script fails, capture the error and update the status.
-        error_message = f"Training failed. Error: {e.stderr}"
+        error_output = e.stderr if e.stderr else e.stdout if hasattr(e, 'stdout') else str(e)
+        error_message = f"Training failed. Error: {error_output}"
         update_status(job_id, 'failed', error_message)
     except Exception as e:
         # Catch any other unexpected errors.

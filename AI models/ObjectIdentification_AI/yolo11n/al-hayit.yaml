@@ -1,0 +1,11 @@
+# YOLOv11 🚀 by Ultralytics https://ultralytics.com, licensed under GNU GPL v3.0
+
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: ../datasets/4yolo  # dataset root dir
+train: training/images  # train images (relative to 'path')
+val: validation/images  # val images (relative to 'path')
+test:  test/images      # test images (optional)
+
+# Classes
+nc: 3  # number of classes
+names: ['pendant', 'keyhole', 'circle']  # class names
