@@ -1,0 +1,13 @@
+# Python Environment Files
+venv/
+__pycache__/
+*.pyc
+
+# Application Generated Files (CRITICAL to ignore!)
+uploads/
+*.json
+
+# Model Weights and Run Logs
+*.pt
+*.pth
+runs/

@@ -67,7 +67,8 @@ def start_training_thread(job_id, model_type, epochs, batch_size, dataset_path):
         result = subprocess.run(
             command, 
             check=True, 
-            capture_output=True, 
+            stdout=sys.stdout, 
+    	    stderr=sys.stderr,
             text=True, 
             cwd=os.path.dirname(os.path.abspath(__file__)),
             bufsize=1  # Line buffered
