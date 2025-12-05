@@ -21,3 +21,5 @@ PyYAML>=5.3.1
 tqdm
 scipy>=1.4.1
 
+# Environment variable management
+python-dotenv>=1.0.0

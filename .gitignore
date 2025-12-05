@@ -2,6 +2,7 @@
 venv/
 __pycache__/
 *.pyc
+.env
 
 # Application Generated Files (CRITICAL to ignore!)
 uploads/

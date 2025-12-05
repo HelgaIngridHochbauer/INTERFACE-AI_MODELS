@@ -139,6 +139,7 @@
                             setTimeout(checkStatus, 3000); 
                         } else {
                             loader.style.display = 'none';
+                            // Show download button when completed (email is just a notification, not the delivery method)
                             if (status === 'completed') {
                                 downloadButton.style.display = 'inline-block';
                             } else {
